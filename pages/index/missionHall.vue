@@ -1,367 +1,237 @@
-<!-- 商品列表 -->
+<!-- 首页 -->
 <template>
-	<view class="pages-">
-		<view class="mission-content">
-			<view class="mission-c">
-				<view class="mission-l">
-					<!-- @confirm="confirmData" -->
-					<u-search placeholder="搜索商品" shape="square" height="100" @search="bandleSearch" @custom="bandleSearch" :showAction="true"
-						:animation="true" :clearabled="true"   v-model="keyword"></u-search>
-					<!-- <view class="mission-list" v-show="searchText">
-						<view @click="searchTextList" class="mission-list-title"> 搜索的商品搜索的商品搜索的商品搜索的商品搜索的商品搜索的商品 </view>
-						<view @click="searchTextList" class="mission-list-title"> 搜索的商品 </view>
-						<view @click="searchTextList" class="mission-list-title"> 搜索的商品 </view>
-					</view> -->
-				</view>
-				<button @click="navigatorToLine" class="mission-r">赚现金</button>
-			</view>
-			<!-- <view class="mission-center"> -->
-			<!-- <u-tabs name="cate_name" count="cate_count" :list="list" :is-scroll="false" :current="current" @change="change" /> -->
+	<view class="home-wrap u-m-b-20">
+		<!-- 侧边栏 -->
+		<!-- <ExDrawer/> -->
+		<!-- 空白页 -->
+		<!-- #ifdef APP-PLUS -->
+		<u-no-network @retry="init"></u-no-network>
+		<!-- #endif -->
+		<shopro-empty v-if="!hasTemplate" :image="$IMG_URL + '/imgs/empty/template_empty.png'" tipText="暂未找到模板，请前往装修~">
+		</shopro-empty>
 
-			<!-- <view class="mission-center-center">
-					<view class="center1  borderL1" @click="tabActive(item)" :class="current == index ?'bgcolor':''"  v-for="(item,index) in listTabs" :key="index">
-						 {{item.name}}
-					</view>
-					 
-				</view> -->
-			<!-- <view  :class="countId==1 ? 'mission-t1':'mission-t2'"    @click="tabActive(item)"
-					v-for="(item,index) in listTabs" :key="index">
-					{{item.name}}
-				</view> -->
-			<!-- </view> -->
-		</view>
-		<goodsListVue @getCodeGoods="getCodeGoods" @getTaskOrder="getTaskOrder" :ploutoUrl="ploutoUrl" :missionList="missionList" />
-		<noData title="暂时还没有商品哦～" v-if="missionList.length==0"/>
-		<!-- 领取弹窗 -->
-		<u-popup v-model="getShow" :borderRadius="10" mode="center" @close="close" @open="open">
-			<view>
-				<view class="modeReceive0">
-					<view class="modeReceiveTitle"> 已领取，请联系客服～</view>
-					<view class="modeReceiveTitle2">
-						<image :src="erweima" mode=""></image>
-					</view>
-					<view class="modeReceiveTitle3">
-						保存到相册，微信扫一扫联系客服
-					</view>
-				</view>
+		<view v-else-if="isConnected && isRefresh" class="content-box">
+			<!-- 导航栏 -->
+			<home-head v-if="headSwiperList && headSwiperList.length" :scrollTop="scrollTop" borderRadius="0"
+				:navTitle="initShop.name" :list="headSwiperList"></home-head>	 
+			<!-- 自定义模块 -->
+			<view class="template-box"> 
+				<block v-for="(item, index) in homeTemplate" :key="item.id">
+					<!-- 轮播 -->
+					<sh-banner v-if="item.type === 'banner' && index !== 0" :Px="item.content.x" :Py="item.content.y"
+						:borderRadius="item.content.radius" :height="item.content.height" :list="item.content.list">
+					</sh-banner>
+
+					<!-- 搜索 -->
+					<!-- <sh-search v-if="item.type === 'search'"></sh-search> -->
+
+					<!-- 滑动宫格 -->
+					<!-- <sh-grid-swiper
+						v-if="item.type === 'menu'"
+						:list="item.content.list"
+						:oneRowNum="item.content.style"
+					></sh-grid-swiper> -->
+
+					<!-- 推荐商品 -->
+					<!-- <sh-hot-goods
+						v-if="item.type === 'goods-list' || item.type === 'goods-group'"
+						:detail="item.content"
+					></sh-hot-goods> -->
+					<!-- 广告魔方 -->
+					<!-- {{item.type === 'adv' ?item.content:''}} -->
+					<sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv>
+					<!-- 优惠券 -->
+					<!-- <sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon> -->
+					<!-- 秒杀-->
+					<!-- <sh-seckill v-if="item.type === 'seckill'" :detail="item.content"></sh-seckill> -->
+					<!-- 拼团 -->
+					<!-- <sh-groupon v-if="item.type === 'groupon'" :detail="item.content"></sh-groupon> -->
+					<!-- 富文本 -->
+					<sh-richtext v-if="item.type === 'rich-text'" :richId="item.content.id"></sh-richtext>
+					<!-- 功能标题 -->
+					<!-- <sh-title-card
+						v-if="item.type === 'title-block'"
+						:title="item.content.name"
+						:bgImage="item.content.image"
+						:titleColor="item.content.color"
+					></sh-title-card> -->
+					<!-- 直播 -->
+					<!-- #ifdef MP-WEIXIN -->
+					<view class=""> </view>
+					<!-- <sh-live v-if="item.type === 'live' && HAS_LIVE" :detail="item.content"></sh-live> -->
+					<!-- #endif -->
+				</block>
 			</view>
-		</u-popup>
+
+			<!-- 分类选项卡 -->
+			<sh-category-tabs
+				v-if="categoryTabsData && categoryTabsData.category_arr && categoryTabsData.category_arr.length"
+				:enable="enable" :styleType="categoryTabsData.style" :tabsList="categoryTabsData.category_arr">
+			</sh-category-tabs>
+			<!-- 登录提示 -->
+			<!-- <shopro-auth-modal></shopro-auth-modal> -->
+			<!-- 悬浮按钮 -->
+			<!-- <shopro-float-btn></shopro-float-btn> -->
+			<!-- 连续弹窗提醒 -->
+			<!-- <shopro-notice-modal v-if="!showPrivacy && isLogin"></shopro-notice-modal> -->
+			<!-- 隐私协议 -->
+			 
+			<!-- #ifdef H5 -->
+			<view class="tabbar-hack" style="height: 120rpx; width:100%;"></view>
+			<!-- #endif -->
+		</view>
+		<!-- <shopro-tabbar></shopro-tabbar> -->
 	</view>
 </template>
 
 <script>
-	// missionHall.task
+	import shBanner from './components/sh-banner.vue';
+
+	import shGridSwiper from './components/sh-grid-swiper.vue';
+	import shHotGoods from './components/sh-hot-goods.vue';
+	import shAdv from './components/sh-adv.vue';
+	import shCoupon from './components/sh-coupon.vue';
+	import shSeckill from './components/sh-seckill.vue';
+	import shGroupon from './components/sh-groupon.vue';
+	import shRichtext from './components/sh-richtext.vue';
+	import shTitleCard from './components/sh-title-card.vue';
+	import shSearch from './components/sh-search.vue';
+	import shCategoryTabs from './components/sh-category-tabs.vue';
+
+	import privacyModal from './index/privacy-modal.vue';
+	import homeHead from './index/home-head.vue';
+
+	// #ifdef MP-WEIXIN
+	import {
+		HAS_LIVE
+	} from '@/env';
+	import shLive from './components/sh-live.vue';
+	// #endif
+ import routingIntercept from '@/utils/permission.js'
 	import {
 		mapMutations,
 		mapActions,
 		mapState,
 		mapGetters
 	} from 'vuex';
- 
-	import goodsListVue from '../../components/juzheng/goodsList.vue';
-	import noData from '../../components/juzheng/noData.vue';
-  import {plouto_url} from "@/shopro/utils/config.js"
-	let systemInfo = uni.getSystemInfoSync();
 	export default {
-		components: {
-			goodsListVue,
-			noData
+		components: {	 
+			shBanner,
+			shGridSwiper,
+			shGroupon,
+			shHotGoods,
+			shAdv,
+			shCoupon,
+			shSeckill,
+			shRichtext,
+			shTitleCard,
+			shSearch,
+			shCategoryTabs,
+
+			privacyModal,
+			homeHead,
+
+			// #ifdef MP-WEIXIN
+			shLive
+			// #endif
 		},
 		data() {
 			return {
-				ploutoUrl:'',
-				erweima: require('../../static/images/mine/erweima.png'),
-				erweima2: require('../../static/images/mine/1676329905397.jpg'),
-				 
-				getShow: false, //领取弹窗
-				searchText: false,
-				countId: 1,
-				keyword: '',
-				listTabs: [{
-					name: '直播任务',
-					id: 0
-				}, {
-					name: "视频任务",
-					id: 1
-				}],
-				current: 0,
-				missionList: []
+				// #ifdef MP-WEIXIN
+				HAS_LIVE: HAS_LIVE,
+				// #endif
+				isRefresh: true,
 
+				enable: false, //是否开启吸顶。
+				isConnected: true, //是否有网
+				showPrivacy: false, //协议
+				scrollTop: 0,
+			   
 			};
 		},
-		// 触底加载更多
-		onReachBottom() {},
-		onLoad() {
-			this.getTeams()
-		},
+
+
 		computed: {
 			...mapGetters(['initShop', 'homeTemplate', 'hasTemplate', 'isLogin', 'userInfo' ]),
-		 
 			 
+			// 头部模块数据
+			headSwiperList() { 
+				if (this.homeTemplate?.length) {
+					 
+					return this.homeTemplate[0]?.content?.list;
+				}
+			},
+			// 分类选项卡数据
+			categoryTabsData() {
+				if (this.homeTemplate?.length) {
+					return this.homeTemplate[this.homeTemplate.length - 1]?.content;
+				}
+			}
+		},
+		onPullDownRefresh() {
+			this.init();
+		},
+		onPageScroll(e) {
+			this.scrollTop = e.scrollTop;
 		},
 		onShow() {
-			this.ploutoUrl = plouto_url
-		console.log("B22222222222ASE_URL",plouto_url)	
+			let that = this;
+		 
+			// if(!this.isLogin){
+			// 	 	console.log("-------no login--->",this.isLogin)
+			//  	uni.reLaunch({
+			// 			url: "/pages/login/login"
+			// 		})
+			//   return		 
+			// }
+			// console.log("isLogin",this.userInfo
+		 
+			this.enable = true;
+			this.isLogin && this.getCartList();
+			// 网络变化检测
+			uni.onNetworkStatusChange(res => {
+				this.isConnected = res.isConnected;
+				res.isConnected && this.init();
+			});
+		},
+		onHide() {
+			this.enable = false;
+		},
+		onLoad() {
+			// #ifdef APP-VUE
+			// plus.runtime.disagreePrivacy();
+			// console.log(plus.runtime.isAgreePrivacy(), 1111111111);
+			// app隐私协议弹窗
+			if (!plus.runtime.isAgreePrivacy()) {
+				this.showPrivacy = true;
+				this.showNoticeModal = false;
+			}
+			// #endif
 		},
 		methods: {
-			// 团队列表 taskDetail
-			getTeams() {
-				let that = this;
-				that.loadStatus = 'loadmore';
-				that.$http('missionHall.task', {
-					page: 1,
-					rows: 10,
-					sort: 'asc',
-					keyword: this.keyword,
-					order: "id"
-				}).then(res => {
-					if (res.data.data) {
-						this.missionList = res.data.data
-					}
-					console.log("=======missionHall.task======>", res.data.data)
+			...mapActions(['appInit', 'getTemplate', 'getCartList']),
+
+			// 初始化
+			init() {
+				this.isRefresh = false;
+				return Promise.all([this.getTemplate()]).then(() => {
+					uni.stopPullDownRefresh();
+					this.isRefresh = true;
 				});
-			},
-			// 抢单
-			getTaskOrder(id) {
-				let that = this;
-				that.$http('missionHall.taskOrder', {
-					id
-                 }).then(res => {
-                   if(res.code==1){
-					   uni.showToast({
-					   	title:res.msg
-					   })
-				   }
-				})
-			},
-			close() {},
-			open() {},
-			getCodeGoods() {
-
-				this.getShow = true
-				console.log("uuuuuu", this.getShow)
-			},
-			change() {},
-			// 点击收缩时触发
-			bandleSearch() {
-				// this.keyword = !this.searchText;
-				this.getTeams()
-				console.log("----", this.keyword)
-			},
-			searchTextList() {
-				this.searchText = !this.searchText
-			},
-			tabActive(item) {
-				this.current = item.id
-			},
-			navigatorToLine() {
-				uni.navigateTo({
-					url: `/pages/dkdetail/rwOrder?type=0`
-				})
-				console.log("9999")
-			},
-
+			}
 		}
-
 	};
 </script>
 
 <style lang="scss">
-	// .pages-{
-	// 	min-height: 100%;
-	// 	background-color: #fff;
-	// }
-	.mission-center-center {
-		width: 500upx;
-		height: 100upx;
-		margin: 0 auto;
-		background-color: #f5f5f5;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		border-radius: 50upx;
-
+	/deep/ .tab-item {
+		padding: 10px !important;
 	}
-
-
-
-	.center1 {
-		width: 250upx;
-		height: 100upx;
-
-		text-align: center;
-		line-height: 100upx;
-		color: #999;
-		font-size: 30upx;
-
+	/deep/ .u-flex{
+		justify-content: space-around;
 	}
-
-	.bgcolor {
-		background-color: #7C75F5;
-		color: #fff;
-
-	}
-
-	.borderL1 {
-		border-radius: 50upx;
-	}
-
-	.mission-list {
-		width: 100%;
-		position: absolute;
-		z-index: 88;
-		background-color: #fff;
-	}
-
-	.mission-list-title {
-		font-size: 16px;
-		padding: 20upx;
-	}
-
-	.mission-content {
-		padding: 40upx 20upx 60upx 20upx;
-		background: linear-gradient(90deg, #F3E5F6, #E7E5FB);
-
-		.mission-center {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			justify-content: space-around;
-			font-size: 18px;
-			margin-top: 40upx;
-
-			position: relative;
-
-			.mission-t {
-				color: #333;
-			}
-		}
-
-		.c1 {
-			color: #7C75F5;
-		}
-
-		.c2 {
-			color: #333;
-		}
-
-
-
-		.mission-t1,
-		.mission-t2 {
-			color: #7C75F5;
-		}
-
-		.mission-t1::after {
-			background: #7C75F5;
-			color: #7C75F5;
-			border-radius: 1px;
-			position: absolute;
-			bottom: -10px;
-			content: "";
-			height: 3px;
-			left: 25%;
-			position: absolute;
-			-webkit-transform: translateX(-50%);
-			-moz-transform: translateX(-50%);
-			-o-transform: translateX(-50%);
-			-ms-transform: translateX(-50%);
-			transform: translateX(-50%);
-			width: 35px;
-		}
-
-		.mission-t2::after {
-			background: #7C75F5;
-			color: #7C75F5;
-			border-radius: 1px;
-			position: absolute;
-			bottom: -10px;
-			content: "";
-			height: 3px;
-			left: 75%;
-			position: absolute;
-			-webkit-transform: translateX(-50%);
-			-moz-transform: translateX(-50%);
-			-o-transform: translateX(-50%);
-			-ms-transform: translateX(-50%);
-			transform: translateX(-50%);
-			width: 35px;
-		}
-	}
-
-	.mission-c {
-
-		display: flex;
-		flex-direction: row;
-		padding: 0 20upx;
-		padding-top: 60upx;
-
-		.mission-l {
-			width: 72%;
-			margin-right: 15px;
-			position: relative;
-		}
-
-		/deep/ uni-button:after {
-			border: none;
-			outline: none;
-		}
-
-		.mission-r {
-			// width: 27%;
-			height: 100upx;
-			line-height: 100upx;
-			font-size: 26upx;
-			background-color: #E7E5FB;
-			border: none;
-			outline: none;
-			color: #7C75F5;
-
-		}
-	}
-
-	.modeReceive0 {
-		// overflow: hidden;
-		width: 600upx;
-		border-radius: 18upx;
-		padding-bottom: 60upx;
-
-	}
-
-	.modeReceiveTitle {
-		text-align: center;
-
-		background-color: #9E8DDE;
-		padding: 40upx 0;
-		color: #fff;
-		// border-top-left-radius: 20upx !important;
-		// border-top-right-radius: 20upx !important;
-
-	}
-
-	.modeReceiveTitle2 {
-
-		width: 400upx;
-		height: 400upx;
-		margin: 0 auto;
-		margin: 40upx auto;
-		background-color: yellow;
-	}
-
-	.modeReceiveTitle2 image {
-		width: 100%;
-		height: 100%;
-	}
-
-	.modeReceiveTitle3 {
-		background: #363636;
-		border-radius: 10px;
-		color: #fff;
-		font-size: 12px;
-		width: 560upx;
-		margin: 0 auto;
-		padding: 8upx 0;
-		text-align: center;
+	/deep/.u-sticky-wrap{
+		background-color: #fff!important;
+		margin-top: 20upx!important;
 	}
 </style>

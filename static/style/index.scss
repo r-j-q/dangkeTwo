@@ -35,3 +35,24 @@ page {
 	-webkit-box-orient:vertical;
 	-webkit-line-clamp:2; 
 }
+
+.disRow{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.jcenter{
+	justify-content: center;
+}
+.jspacearound{
+	justify-content: space-around;
+}
+.jspacebetween{
+	justify-content: space-between;
+}
+.tc{
+	text-align: center;
+}
+.p_t_b_20{
+	padding: 40upx 0;
+}

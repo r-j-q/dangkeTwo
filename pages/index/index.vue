@@ -1,237 +1,282 @@
-<!-- 首页 -->
+<!-- 商品列表 -->
 <template>
-	<view class="home-wrap u-m-b-20">
-		<!-- 侧边栏 -->
-		<!-- <ExDrawer/> -->
-		<!-- 空白页 -->
-		<!-- #ifdef APP-PLUS -->
-		<u-no-network @retry="init"></u-no-network>
-		<!-- #endif -->
-		<shopro-empty v-if="!hasTemplate" :image="$IMG_URL + '/imgs/empty/template_empty.png'" tipText="暂未找到模板，请前往装修~">
-		</shopro-empty>
-
-		<view v-else-if="isConnected && isRefresh" class="content-box">
-			<!-- 导航栏 -->
-			<home-head v-if="headSwiperList && headSwiperList.length" :scrollTop="scrollTop" borderRadius="0"
-				:navTitle="initShop.name" :list="headSwiperList"></home-head>	 
-			<!-- 自定义模块 -->
-			<view class="template-box"> 
-				<block v-for="(item, index) in homeTemplate" :key="item.id">
-					<!-- 轮播 -->
-					<sh-banner v-if="item.type === 'banner' && index !== 0" :Px="item.content.x" :Py="item.content.y"
-						:borderRadius="item.content.radius" :height="item.content.height" :list="item.content.list">
-					</sh-banner>
-
-					<!-- 搜索 -->
-					<!-- <sh-search v-if="item.type === 'search'"></sh-search> -->
-
-					<!-- 滑动宫格 -->
-					<!-- <sh-grid-swiper
-						v-if="item.type === 'menu'"
-						:list="item.content.list"
-						:oneRowNum="item.content.style"
-					></sh-grid-swiper> -->
-
-					<!-- 推荐商品 -->
-					<!-- <sh-hot-goods
-						v-if="item.type === 'goods-list' || item.type === 'goods-group'"
-						:detail="item.content"
-					></sh-hot-goods> -->
-					<!-- 广告魔方 -->
-					<!-- {{item.type === 'adv' ?item.content:''}} -->
-					<sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv>
-					<!-- 优惠券 -->
-					<!-- <sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon> -->
-					<!-- 秒杀-->
-					<!-- <sh-seckill v-if="item.type === 'seckill'" :detail="item.content"></sh-seckill> -->
-					<!-- 拼团 -->
-					<!-- <sh-groupon v-if="item.type === 'groupon'" :detail="item.content"></sh-groupon> -->
-					<!-- 富文本 -->
-					<sh-richtext v-if="item.type === 'rich-text'" :richId="item.content.id"></sh-richtext>
-					<!-- 功能标题 -->
-					<!-- <sh-title-card
-						v-if="item.type === 'title-block'"
-						:title="item.content.name"
-						:bgImage="item.content.image"
-						:titleColor="item.content.color"
-					></sh-title-card> -->
-					<!-- 直播 -->
-					<!-- #ifdef MP-WEIXIN -->
-					<view class=""> </view>
-					<!-- <sh-live v-if="item.type === 'live' && HAS_LIVE" :detail="item.content"></sh-live> -->
-					<!-- #endif -->
-				</block>
-			</view>
-
-			<!-- 分类选项卡 -->
-			<sh-category-tabs
-				v-if="categoryTabsData && categoryTabsData.category_arr && categoryTabsData.category_arr.length"
-				:enable="enable" :styleType="categoryTabsData.style" :tabsList="categoryTabsData.category_arr">
-			</sh-category-tabs>
-			<!-- 登录提示 -->
-			<!-- <shopro-auth-modal></shopro-auth-modal> -->
-			<!-- 悬浮按钮 -->
-			<!-- <shopro-float-btn></shopro-float-btn> -->
-			<!-- 连续弹窗提醒 -->
-			<!-- <shopro-notice-modal v-if="!showPrivacy && isLogin"></shopro-notice-modal> -->
-			<!-- 隐私协议 -->
-			 
-			<!-- #ifdef H5 -->
-			<view class="tabbar-hack" style="height: 120rpx; width:100%;"></view>
-			<!-- #endif -->
+	<view class="minHeightColor bannerColor">
+		  <view class="minHeightColorleft">
+		  	<u-icon name="list" color="#000" size="30"></u-icon>
+		  </view>
+		  <view class="minHeightColorRow">
+		  	   <view class="boleft" @click="handleDirectSeeding(item)" :class="counts==item.id ?'actives':''" v-for="(item,index) in listTabs" :key="index">
+		  	   	  {{item.name}}
+		  	   </view>
+		  </view>
+		  <view class="minHeightColorRow">
+		  	   <view class="boleft" @click="handleTimeDirectSeeding(item)" :class="countsTimes==item.id ?'activeTime':''" v-for="(item,index) in listTabTimes" :key="index">
+		  	   	  {{item.name}}
+		  	   </view>
+		  </view>
+		<view class="directSeedingCoutent">
+			 <view class="f12 tc p_t_b_20">说明：每个自然月，按照每天累计进行展示</view>
+			 <view class="tvip disRow jspacearound">
+			 	<view class="tvip0 tvip01">
+					<view class="tvipavatar">
+						<image class="tvipstyle" :src="vip1" mode=""></image>
+						<image src="https://cdn.uviewui.com/uview/album/5.jpg" mode=""></image>
+					</view>
+					<view class="f12 mtop tc">
+						婷婷正在直播
+					</view>
+				</view>
+			 	<view class="tvip0 tvip02">
+					<view class="tvipavatar">
+						<image class="tvipstyle" :src="vip2" mode=""></image>
+						<image src="https://cdn.uviewui.com/uview/album/5.jpg" mode=""></image>
+					</view>
+				</view>
+			 	<view class="tvip0 tvip03" >
+					<view class="tvipavatar">
+						<image class="tvipstyle" :src="vip3" mode=""></image>
+						<image src="https://cdn.uviewui.com/uview/album/5.jpg" mode=""></image>
+					</view>
+					</view>
+			 </view>
 		</view>
-		<!-- <shopro-tabbar></shopro-tabbar> -->
+		 
+		  
 	</view>
 </template>
 
 <script>
-	import shBanner from './components/sh-banner.vue';
-
-	import shGridSwiper from './components/sh-grid-swiper.vue';
-	import shHotGoods from './components/sh-hot-goods.vue';
-	import shAdv from './components/sh-adv.vue';
-	import shCoupon from './components/sh-coupon.vue';
-	import shSeckill from './components/sh-seckill.vue';
-	import shGroupon from './components/sh-groupon.vue';
-	import shRichtext from './components/sh-richtext.vue';
-	import shTitleCard from './components/sh-title-card.vue';
-	import shSearch from './components/sh-search.vue';
-	import shCategoryTabs from './components/sh-category-tabs.vue';
-
-	import privacyModal from './index/privacy-modal.vue';
-	import homeHead from './index/home-head.vue';
-
-	// #ifdef MP-WEIXIN
-	import {
-		HAS_LIVE
-	} from '@/env';
-	import shLive from './components/sh-live.vue';
-	// #endif
- import routingIntercept from '@/utils/permission.js'
+	// missionHall.task
 	import {
 		mapMutations,
 		mapActions,
 		mapState,
 		mapGetters
 	} from 'vuex';
+ 
+	import goodsListVue from '../../components/juzheng/goodsList.vue';
+	import noData from '../../components/juzheng/noData.vue';
+  import {plouto_url} from "@/shopro/utils/config.js"
+	let systemInfo = uni.getSystemInfoSync();
 	export default {
-		components: {	 
-			shBanner,
-			shGridSwiper,
-			shGroupon,
-			shHotGoods,
-			shAdv,
-			shCoupon,
-			shSeckill,
-			shRichtext,
-			shTitleCard,
-			shSearch,
-			shCategoryTabs,
-
-			privacyModal,
-			homeHead,
-
-			// #ifdef MP-WEIXIN
-			shLive
-			// #endif
+		components: {
+			goodsListVue,
+			noData
 		},
 		data() {
 			return {
-				// #ifdef MP-WEIXIN
-				HAS_LIVE: HAS_LIVE,
-				// #endif
-				isRefresh: true,
+				vip2: require('../../static/images/bo/v2.png'),
+				vip1: require('../../static/images/bo/v1.png'),
+				vip3: require('../../static/images/bo/v3.png'),
+				ploutoUrl:'',
+				erweima: require('../../static/images/mine/erweima.png'),
+				 counts:0,
+				listTabs: [{
+					name: '直播排名',
+					id: 0
+				}, {
+					name: "玩法介绍",
+					id: 1
+				}],
+				countsTimes:0,
+				listTabTimes:[{
+					name: '月度直播时长top10',
+					id: 0
+				}, {
+					name: "月度直播收益top10",
+					id: 1
+				}],
+				 
 
-				enable: false, //是否开启吸顶。
-				isConnected: true, //是否有网
-				showPrivacy: false, //协议
-				scrollTop: 0,
-			   
 			};
 		},
-
-
+		// 触底加载更多
+		onReachBottom() {},
+		onLoad() {
+			this.getTeams()
+		},
 		computed: {
 			...mapGetters(['initShop', 'homeTemplate', 'hasTemplate', 'isLogin', 'userInfo' ]),
+		 
 			 
-			// 头部模块数据
-			headSwiperList() { 
-				if (this.homeTemplate?.length) {
-					 
-					return this.homeTemplate[0]?.content?.list;
-				}
-			},
-			// 分类选项卡数据
-			categoryTabsData() {
-				if (this.homeTemplate?.length) {
-					return this.homeTemplate[this.homeTemplate.length - 1]?.content;
-				}
-			}
-		},
-		onPullDownRefresh() {
-			this.init();
-		},
-		onPageScroll(e) {
-			this.scrollTop = e.scrollTop;
 		},
 		onShow() {
-			let that = this;
-		 
-			// if(!this.isLogin){
-			// 	 	console.log("-------no login--->",this.isLogin)
-			//  	uni.reLaunch({
-			// 			url: "/pages/login/login"
-			// 		})
-			//   return		 
-			// }
-			// console.log("isLogin",this.userInfo
-		 
-			this.enable = true;
-			this.isLogin && this.getCartList();
-			// 网络变化检测
-			uni.onNetworkStatusChange(res => {
-				this.isConnected = res.isConnected;
-				res.isConnected && this.init();
-			});
-		},
-		onHide() {
-			this.enable = false;
-		},
-		onLoad() {
-			// #ifdef APP-VUE
-			// plus.runtime.disagreePrivacy();
-			// console.log(plus.runtime.isAgreePrivacy(), 1111111111);
-			// app隐私协议弹窗
-			if (!plus.runtime.isAgreePrivacy()) {
-				this.showPrivacy = true;
-				this.showNoticeModal = false;
-			}
-			// #endif
+			this.ploutoUrl = plouto_url
+		console.log("B22222222222ASE_URL",plouto_url)	
 		},
 		methods: {
-			...mapActions(['appInit', 'getTemplate', 'getCartList']),
-
-			// 初始化
-			init() {
-				this.isRefresh = false;
-				return Promise.all([this.getTemplate()]).then(() => {
-					uni.stopPullDownRefresh();
-					this.isRefresh = true;
+			handleDirectSeeding(item){
+				this.counts = item.id;
+			},
+			handleTimeDirectSeeding(item){
+				this.countsTimes = item.id;
+			},
+			
+			
+			
+			
+			
+			// 团队列表 taskDetail
+			getTeams() {
+				let that = this;
+				that.loadStatus = 'loadmore';
+				that.$http('missionHall.task', {
+					page: 1,
+					rows: 10,
+					sort: 'asc',
+					keyword: this.keyword,
+					order: "id"
+				}).then(res => {
+					if (res.data.data) {
+						this.missionList = res.data.data
+					}
+					console.log("=======missionHall.task======>", res.data.data)
 				});
-			}
+			},
+			// 抢单
+			getTaskOrder(id) {
+				let that = this;
+				that.$http('missionHall.taskOrder', {
+					id
+                 }).then(res => {
+                   if(res.code==1){
+					   uni.showToast({
+					   	title:res.msg
+					   })
+				   }
+				})
+			},
+			close() {},
+			open() {},
+			getCodeGoods() {
+
+				this.getShow = true
+				console.log("uuuuuu", this.getShow)
+			},
+			change() {},
+			// 点击收缩时触发
+			bandleSearch() {
+				// this.keyword = !this.searchText;
+				this.getTeams()
+				console.log("----", this.keyword)
+			},
+			searchTextList() {
+				this.searchText = !this.searchText
+			},
+			tabActive(item) {
+				this.current = item.id
+			},
+			navigatorToLine() {
+				uni.navigateTo({
+					url: `/pages/dkdetail/rwOrder?type=0`
+				})
+				console.log("9999")
+			},
+
 		}
+
 	};
 </script>
 
-<style lang="scss">
-	/deep/ .tab-item {
-		padding: 10px !important;
+<style lang="scss" scoped>
+	 .minHeightColor{
+		 min-height: 100vh;
+	 }
+	 .minHeightColorleft{
+		 padding: 40upx;
+	 }
+	 .minHeightColorRow{
+		 display: flex;
+		 flex-direction: row;
+		 align-items: center;
+		 justify-content: center;
+		 padding: 20upx 0 40upx 0;
+		
+	 }
+		 
+	 .boleft{
+		font-size: 30upx;
+		margin-right: 28upx;
+		color: #767E8B;
+	 }
+	 .activeTime{
+		 background-color: #fff;
+		 color: #1A2340;
+		 font-weight: bold;
+		 padding: 8upx;
+		 border-radius: 10upx;
+	 }
+		 
+	 .actives{
+		 font-size: 40upx;
+		 font-weight: 700;
+		 color: #1A2340;
+	 }
+	 .directSeedingCoutent{
+		 width: 90%;
+		 margin: 0 auto;
+		 background-color: #fff;
+		 border-radius: 20upx;
+	 }
+	 .tvip{
+		 width: 94%;
+		 margin: 0 auto;
+		 margin-top:140upx;
+	 }
+	 .tvip0{ 
+		 width: 100%;
+		 width: 282upx;
+		 height: 200upx;
+		 position: relative;
+		 border-radius: 10upx;
+	 }
+	.tvip0:nth-child(even){
+		// background-color: yellow;
+		margin: 0 20upx;
+		margin-top: -80upx;
 	}
-	/deep/ .u-flex{
-		justify-content: space-around;
+	.tvipavatar{
+		    position: absolute;
+		    top: -50upx;
+		    left: 0;
+		    right: 0;
+		    z-index: 99;
+		    display: flex;
+		    align-items: center;
+		    flex-direction: row;
+		    justify-content: center;
 	}
-	/deep/.u-sticky-wrap{
-		background-color: #fff!important;
-		margin-top: 20upx!important;
+	.tvipavatar image{
+		width: 100upx;
+		height: 100upx;
+		border-radius: 50upx;
+	}
+	.tvip01{
+		background-image: url(../../static/images/bo/v_2.png);
+		background-size: contain;
+		background-repeat: no-repeat;
+		    // width: 100%;
+		    // height: 100%;
+	}
+	.tvip02{
+		background-image: url(../../static/images/bo/v_1.png);
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+	.tvip03{
+		background-image: url(../../static/images/bo/v_3.png);
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+	.tvipavatar .tvipstyle{
+		position: absolute;
+		    width: 52upx;
+		    height: 52upx;
+		    z-index: 100;
+		    top: -18upx;
+		    right: 24upx;
+	}
+	.mtop{
+		margin-top: 60upx;
 	}
 </style>

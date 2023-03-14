@@ -1,16 +1,16 @@
 <script>
- // import routingIntercept from '@/utils/permission.js'
- 	import {
- 		init
- 	} from "@/shopro";
- 	export default {
- 		 
-		 
- 		onLaunch(options) {
+	// import routingIntercept from '@/utils/permission.js'
+	import {
+		init
+	} from "@/shopro";
+	export default {
+
+
+		onLaunch(options) {
 			// let token = uni.getStorageSync('token');
-			 
-			
-			  
+
+
+
 			// 	if(  token){
 			// 		uni.switchTab({
 			// 			url:'/pages/index/index'
@@ -22,78 +22,86 @@
 			// 	uni.hideTabBar()
 			// }
 			// console.log('======options',options)
-		 
+
 			// 	 // routingIntercept()
 			// }catch(e){
 			// }
-            
- 			init(options);
 
-		    
+			init(options);
 
- 		},
- 		globalData: { 
-		 
- 			// toast: Object, //全局提示，必须在页面初始化
- 		},
-		onShow() {
-		// setTimeout(()=>{
-		// 	plus.navigator.closeSplashscreen()
-		// },2000)	
+
+
 		},
- 		methods:{
- 		 
-         loginAuther(){
-			 uni.reLaunch({
-			 	url:"/pages/login/login"
-			 })
-			 // plus.navigator.closeSplashscreen()
-			  
-		 }
- 			 
- 		}
+		globalData: {
+
+			// toast: Object, //全局提示，必须在页面初始化
+		},
+		onShow() {
+			// setTimeout(()=>{
+			// 	plus.navigator.closeSplashscreen()
+			// },2000)	
+		},
+		methods: {
+
+			loginAuther() {
+				uni.reLaunch({
+					url: "/pages/login/login"
+				})
+				// plus.navigator.closeSplashscreen()
+
+			}
+
+		}
 
 
 
- 	};
- </script>
+	};
+</script>
 
- <style lang="scss">
- 	@import 'static/style/index.scss';
+<style lang="scss">
+	@import 'static/style/index.scss';
 
- 	* {
- 		font-family: SourceHanSansCN;
- 	}
+	* {
+		font-family: SourceHanSansCN;
+	}
 
- 	.p_100 {
- 		padding-bottom: 100upx;
- 	}
+	.bannerColor {
+		background: linear-gradient(180deg, #cfd8f7, #f0f2f6);
+	}
 
- 	.color98 {
- 		color: #9E8CDE;
- 	}
+	.p_100 {
+		padding-bottom: 100upx;
+	}
 
- 	.colora8 {
- 		color: #A8A8A8;
- 	}
+	.color98 {
+		color: #9E8CDE;
+	}
 
- 	.colorf {
- 		color: #fff;
- 	}
+	.colora8 {
+		color: #A8A8A8;
+	}
 
- 	.f28 {
- 		font-size: 28upx;
- 	}
+	.colorf {
+		color: #fff;
+	}
 
- 	.f32 {
- 		font-size: 32upx;
- 	}
- </style>
- <!-- 组件集成 https://github.com/umicro/uView -->
+	.f12 {
+		font-size: 24upx;
+	}
+
+	.f28 {
+		font-size: 28upx;
+	}
+
+	.f32 {
+		font-size: 32upx;
+	}
+</style>
+<!-- 组件集成 https://github.com/umicro/uView -->
 
 
 
- <!-- 
+<!-- 
 测试证书
 
 testdanke.keystore 

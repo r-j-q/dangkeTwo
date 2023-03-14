@@ -1221,35 +1221,37 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "蛋壳矩阵",
 		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#FFFFFF"
+		"backgroundColor": "#CFD8F7"
 	},
 	"tabBar": {
 		"color": "#333",
-		"selectedColor": "#7C75F5",
+		"selectedColor": "#2C6EF7",
 		"backgroundColor": "#ffffff",
 		"borderStyle": "black",
-		"list": [{
-				"pagePath": "pages/index/index",
-				"text": "首页",
-				"iconPath": "static/images/tabbar/tabbar_home.png",
-				"selectedIconPath": "/static/images/tabbar/tabbar_home1.png"
-			}, 
+		"list": [
 			{
-				"pagePath": "pages/index/missionHall",
-				"text": "任务大厅",
+				"pagePath": "pages/index/index",
+				"text": "主页",
 				"iconPath": "static/images/tabbar/tabbar_cart.png",
 				"selectedIconPath": "/static/images/tabbar/tabbar_cart1.png"
 			},
 			{
+				"pagePath": "pages/index/missionHall",
+				"text": "商城",
+				"iconPath": "static/images/tabbar/tabbar_home.png",
+				"selectedIconPath": "/static/images/tabbar/tabbar_home1.png"
+			}, 
+			 
+			{
 				"pagePath": "pages/index/vip",
-				"text": "会员专区",
+				"text": "通知",
 				"iconPath": "static/images/tabbar/tabbar_category.png",
 				"selectedIconPath": "/static/images/tabbar/tabbar_category1.png"
 
 			},
 			{
 				"pagePath": "pages/index/user",
-				"text": "个人中心",
+				"text": "我的",
 				"iconPath": "static/images/tabbar/tabbar_personal.png",
 				"selectedIconPath": "/static/images/tabbar/tabbar_personal1.png"
 			}
