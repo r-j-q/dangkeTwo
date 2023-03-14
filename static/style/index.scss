@@ -35,7 +35,18 @@ page {
 	-webkit-box-orient:vertical;
 	-webkit-line-clamp:2; 
 }
-
+.el1{
+	overflow:hidden; 
+	text-overflow:ellipsis;
+	display:-webkit-box; 
+	-webkit-box-orient:vertical;
+	-webkit-line-clamp:1; 
+}
+.disRowol{
+	display: flex;
+	flex-direction: row;
+	 
+}
 .disRow{
 	display: flex;
 	flex-direction: row;
@@ -55,4 +66,7 @@ page {
 }
 .p_t_b_20{
 	padding: 40upx 0;
+}
+.margin_bottom_20{
+	margin-top: 40upx;
 }
